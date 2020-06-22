@@ -1237,3 +1237,6 @@ CREATE TRIGGER tgr_deleteRegion
 --5432 port
 --postgres masterUser
 --12345678 password
+
+"org.postgresql.Driver"
+"oracle.jdbc.driver.OracleDriver"

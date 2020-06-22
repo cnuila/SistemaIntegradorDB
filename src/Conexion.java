@@ -21,13 +21,13 @@ public class Conexion {
     private String puerto;
     private String user;
     private String clave;
-    private String url = "jdbc:oracle:thin:@proyectotdb.cf2eishw8pnc.us-east-1.rds.amazonaws.com:1521:ORCL";
+    private String url;
 
     public Conexion(boolean oracle, String nombreInstancia, String nombreDB, String puerto, String user, String clave) {
-        this.url = "jdbc:postgresql:";
+        this.url = "jdbc:postgresql://";
         this.className = "org.postgresql.Driver";
         if (oracle) {
-            this.url = "jdbc:oracle:thin:";
+            this.url = "jdbc:oracle:thin:@";
             this.className = "oracle.jdbc.driver.OracleDriver";
         }
         this.nombreInstancia = nombreInstancia;
@@ -35,11 +35,28 @@ public class Conexion {
         this.nombreDB = nombreDB;
         this.user = user;
         this.clave = clave;
-        this.url += "//"+this.nombreInstancia+":"+this.puerto+"/"+this.nombreDB+"?user="+this.user+"&password="+this.clave;
+        this.url += this.nombreInstancia+":"+this.puerto+"/"+this.nombreDB+"?user="+this.user+"&password="+this.clave;
+    }
+    
+    public Conexion(String url, boolean oracle){
+        this.className = "org.postgresql.Driver";
+        if (oracle){
+            this.className = "oracle.jdbc.driver.OracleDriver";
+        }
+        this.url = url;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public String getClassName() {
+        return className;
     }
 
     public Connection getConnection() {
         try {
+            conn = null;
             Class.forName(className);
             conn = DriverManager.getConnection(url);
             conn.setAutoCommit(false);
@@ -50,13 +67,19 @@ public class Conexion {
             }
         } catch (ClassNotFoundException | SQLException e) {
             System.out.println("Conexion erronea " + e.getMessage());
+            return null;
         }
+        return conn;
+    }
+
+    public Connection getConn() {
         return conn;
     }
 
     public void desconexion() {
         try {
             conn.close();
+            conn  = null;
         } catch (Exception e) {
 
         }
