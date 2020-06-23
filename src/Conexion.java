@@ -14,7 +14,7 @@ import java.sql.SQLException;
  */
 public class Conexion {
 
-    private static Connection conn = null;
+    private Connection conn = null;
     private String className;
     private String nombreInstancia;
     private String nombreDB;
@@ -56,10 +56,9 @@ public class Conexion {
 
     public Connection getConnection() {
         try {
-            conn = null;
             Class.forName(className);
             conn = DriverManager.getConnection(url);
-            conn.setAutoCommit(false);
+            //conn.setAutoCommit(false);
             if (conn != null) {
                 System.out.println("Conexion Exitosa");
             } else {
@@ -79,7 +78,6 @@ public class Conexion {
     public void desconexion() {
         try {
             conn.close();
-            conn  = null;
         } catch (Exception e) {
 
         }
