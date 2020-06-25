@@ -58,7 +58,7 @@ public class Conexion {
         try {
             Class.forName(className);
             conn = DriverManager.getConnection(url);
-            //conn.setAutoCommit(false);
+            conn.setAutoCommit(true);
             if (conn != null) {
                 System.out.println("Conexion Exitosa");
             } else {

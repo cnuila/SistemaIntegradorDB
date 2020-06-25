@@ -138,9 +138,6 @@
                   </Constraints>
                 </Component>
                 <Component class="javax.swing.JTextField" name="jt_ndbO">
-                  <Properties>
-                    <Property name="text" type="java.lang.String" value="proyecto"/>
-                  </Properties>
                   <Constraints>
                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
                       <AbsoluteConstraints x="130" y="160" width="170" height="-1"/>
@@ -148,9 +145,6 @@
                   </Constraints>
                 </Component>
                 <Component class="javax.swing.JTextField" name="jt_portO">
-                  <Properties>
-                    <Property name="text" type="java.lang.String" value="5432"/>
-                  </Properties>
                   <Constraints>
                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
                       <AbsoluteConstraints x="130" y="200" width="90" height="-1"/>
@@ -158,9 +152,6 @@
                   </Constraints>
                 </Component>
                 <Component class="javax.swing.JTextField" name="jt_userO">
-                  <Properties>
-                    <Property name="text" type="java.lang.String" value="postgres"/>
-                  </Properties>
                   <Constraints>
                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
                       <AbsoluteConstraints x="130" y="240" width="140" height="-1"/>
@@ -168,9 +159,6 @@
                   </Constraints>
                 </Component>
                 <Component class="javax.swing.JTextField" name="jt_psswdO">
-                  <Properties>
-                    <Property name="text" type="java.lang.String" value="12345678"/>
-                  </Properties>
                   <Constraints>
                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
                       <AbsoluteConstraints x="130" y="280" width="170" height="-1"/>
@@ -178,9 +166,6 @@
                   </Constraints>
                 </Component>
                 <Component class="javax.swing.JTextField" name="jt_nInstanciaO">
-                  <Properties>
-                    <Property name="text" type="java.lang.String" value="postgredb.ccet05tt3mp2.us-east-1.rds.amazonaws.com"/>
-                  </Properties>
                   <Constraints>
                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
                       <AbsoluteConstraints x="130" y="110" width="170" height="-1"/>
@@ -238,9 +223,6 @@
                   </Constraints>
                 </Component>
                 <Component class="javax.swing.JTextField" name="jt_psswdD">
-                  <Properties>
-                    <Property name="text" type="java.lang.String" value="12345678"/>
-                  </Properties>
                   <Constraints>
                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
                       <AbsoluteConstraints x="470" y="280" width="170" height="-1"/>
@@ -268,9 +250,6 @@
                   </Constraints>
                 </Component>
                 <Component class="javax.swing.JTextField" name="jt_userD">
-                  <Properties>
-                    <Property name="text" type="java.lang.String" value="admin"/>
-                  </Properties>
                   <Constraints>
                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
                       <AbsoluteConstraints x="470" y="240" width="140" height="-1"/>
@@ -278,9 +257,6 @@
                   </Constraints>
                 </Component>
                 <Component class="javax.swing.JTextField" name="jt_portD">
-                  <Properties>
-                    <Property name="text" type="java.lang.String" value="1521"/>
-                  </Properties>
                   <Constraints>
                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
                       <AbsoluteConstraints x="470" y="200" width="90" height="-1"/>
@@ -308,9 +284,6 @@
                   </Constraints>
                 </Component>
                 <Component class="javax.swing.JTextField" name="jt_ndbD">
-                  <Properties>
-                    <Property name="text" type="java.lang.String" value="PROYECTO"/>
-                  </Properties>
                   <Constraints>
                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
                       <AbsoluteConstraints x="470" y="160" width="170" height="-1"/>
@@ -318,9 +291,6 @@
                   </Constraints>
                 </Component>
                 <Component class="javax.swing.JTextField" name="jt_nInstanciaD">
-                  <Properties>
-                    <Property name="text" type="java.lang.String" value="oracledb.ccet05tt3mp2.us-east-1.rds.amazonaws.com"/>
-                  </Properties>
                   <Constraints>
                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
                       <AbsoluteConstraints x="470" y="110" width="170" height="-1"/>

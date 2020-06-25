@@ -108,20 +108,10 @@ public class main extends javax.swing.JFrame {
 
         jLabel7.setText("Nombre Usuario:");
         jPanel2.add(jLabel7, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 240, -1, -1));
-
-        jt_ndbO.setText("proyecto");
         jPanel2.add(jt_ndbO, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 160, 170, -1));
-
-        jt_portO.setText("5432");
         jPanel2.add(jt_portO, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 200, 90, -1));
-
-        jt_userO.setText("postgres");
         jPanel2.add(jt_userO, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 240, 140, -1));
-
-        jt_psswdO.setText("12345678");
         jPanel2.add(jt_psswdO, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 280, 170, -1));
-
-        jt_nInstanciaO.setText("postgredb.ccet05tt3mp2.us-east-1.rds.amazonaws.com");
         jPanel2.add(jt_nInstanciaO, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 110, 170, -1));
 
         jb_probarO.setText("Probar");
@@ -145,8 +135,6 @@ public class main extends javax.swing.JFrame {
 
         jl_conexionEstadoD.setForeground(new java.awt.Color(0, 255, 0));
         jPanel2.add(jl_conexionEstadoD, new org.netbeans.lib.awtextra.AbsoluteConstraints(570, 380, 110, 20));
-
-        jt_psswdD.setText("12345678");
         jPanel2.add(jt_psswdD, new org.netbeans.lib.awtextra.AbsoluteConstraints(470, 280, 170, -1));
 
         jLabel8.setText("Password:");
@@ -154,11 +142,7 @@ public class main extends javax.swing.JFrame {
 
         jLabel9.setText("Nombre Usuario:");
         jPanel2.add(jLabel9, new org.netbeans.lib.awtextra.AbsoluteConstraints(370, 240, -1, -1));
-
-        jt_userD.setText("admin");
         jPanel2.add(jt_userD, new org.netbeans.lib.awtextra.AbsoluteConstraints(470, 240, 140, -1));
-
-        jt_portD.setText("1521");
         jPanel2.add(jt_portD, new org.netbeans.lib.awtextra.AbsoluteConstraints(470, 200, 90, -1));
 
         jLabel10.setText("Puerto:");
@@ -166,11 +150,7 @@ public class main extends javax.swing.JFrame {
 
         jLabel11.setText("Nombre Base Datos:");
         jPanel2.add(jLabel11, new org.netbeans.lib.awtextra.AbsoluteConstraints(350, 160, -1, -1));
-
-        jt_ndbD.setText("PROYECTO");
         jPanel2.add(jt_ndbD, new org.netbeans.lib.awtextra.AbsoluteConstraints(470, 160, 170, -1));
-
-        jt_nInstanciaD.setText("oracledb.ccet05tt3mp2.us-east-1.rds.amazonaws.com");
         jPanel2.add(jt_nInstanciaD, new org.netbeans.lib.awtextra.AbsoluteConstraints(470, 110, 170, -1));
 
         jLabel12.setText("Nombre Instancia:");
@@ -310,6 +290,8 @@ public class main extends javax.swing.JFrame {
         // TODO add your handling code here:
         if (jl_conexionEstadoO.getText().equals("Conexión Correcta") && jl_conexionEstadoD.getText().equals("Conexión Correcta")) {
 
+            jl_tablasO.setModel(new DefaultListModel<>());
+
             DefaultListModel modelo = (DefaultListModel) jl_tablasO.getModel();
             modelo.addElement("Countries");
             modelo.addElement("Departments");
@@ -385,11 +367,18 @@ public class main extends javax.swing.JFrame {
     }//GEN-LAST:event_jb_cancelarMouseClicked
 
     private void jb_realizarCambiosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jb_realizarCambiosMouseClicked
-        try {
-            // TODO add your handling code here:
-            insertar();
-        } catch (SQLException ex) {
-            Logger.getLogger(main.class.getName()).log(Level.SEVERE, null, ex);
+        DefaultListModel modelo = (DefaultListModel) jl_tablasReplicar.getModel();
+        if (modelo.getSize() >= 1) {
+            try {
+                String[] tablasAreplicar = new String[modelo.getSize()];
+                modelo.copyInto(tablasAreplicar);
+                insertar(tablasAreplicar);
+                JOptionPane.showMessageDialog(this, "Se replicaron las tablas", "Succes", JOptionPane.INFORMATION_MESSAGE);
+            } catch (SQLException ex) {
+                Logger.getLogger(main.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        } else {
+            JOptionPane.showMessageDialog(this, "Debe haber elementos en la tabla de replica", "Error", JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_jb_realizarCambiosMouseClicked
 
@@ -428,207 +417,210 @@ public class main extends javax.swing.JFrame {
         });
     }
 
-    public void insertar() throws SQLException {
+    public void insertar(String[] tablasReplicar) throws SQLException {
         connOrigen.getConnection();
         connDestino.getConnection();
-        
 
-        String row[] = new String[3];
+        for (int i = 0; i < tablasReplicar.length; i++) {
+            String row[] = new String[3];
 
-        String sql = "SELECT tablaReferencia, datos, \"idOperacion\" FROM bitacora WHERE replicado = false AND operacion = 'Insert'";
-        Statement st = connOrigen.getConn().createStatement();
-        ResultSet rs = st.executeQuery(sql);
+            String sql = "SELECT tablaReferencia, datos, \"idOperacion\" FROM bitacora WHERE replicado = false AND operacion = 'Insert' AND tablaReferencia = ?";
+            PreparedStatement ps3 = connOrigen.getConn().prepareStatement(sql);
+            ps3.setString(1, tablasReplicar[i]);
+            ResultSet rs = ps3.executeQuery();
 
-        while (rs.next()) {
-            for (int i = 0; i < row.length; i++) {
-                row[i] = rs.getString(i + 1);
-            }
+            while (rs.next()) {
+                for (int j = 0; j < row.length; j++) {
+                    row[j] = rs.getString(j + 1);
+                }
 
-            String tabla = row[0];
+                String tabla = row[0];
 
-            String insertarSQL = "";
-            String campos[] = row[1].split("[|]");
+                String insertarSQL = "";
+                String campos[] = row[1].split("[|]");
 
-            if (tabla.equals("Countries")) {
-                insertarSQL = "INSERT INTO Countries VALUES (?,?,?)";
-                PreparedStatement ps2 = connDestino.getConn().prepareStatement(insertarSQL);
-                ps2.setString(1, campos[0]);
-                if (campos[1].equals("0")) {
-                    ps2.setNull(2, java.sql.Types.NULL);
-                } else {
-                    ps2.setString(2, campos[1]);
-                }
-                if (campos[2].equals("0")) {
-                    ps2.setNull(3, java.sql.Types.NULL);
-                }
-                ps2.executeUpdate();
-            }
+                System.out.println(Arrays.toString(row));
 
-            if (tabla.equals("Departments")) {
-                insertarSQL = "INSERT INTO Departments VALUES (?,?,?,?)";
-                PreparedStatement ps2 = connDestino.getConn().prepareStatement(insertarSQL);
-                ps2.setInt(1, Integer.parseInt(campos[0]));
-                if (campos[1].equals("0")) {
-                    ps2.setNull(2, java.sql.Types.NULL);
-                } else {
-                    ps2.setString(2, campos[1]);
-                }
-                if (campos[2].equals("0")) {
-                    ps2.setNull(3, java.sql.Types.NULL);
-                } else {
-                    ps2.setInt(3, Integer.parseInt(campos[2]));
-                }
-                if (campos[3].equals("0")) {
-                    ps2.setNull(4, java.sql.Types.NULL);
-                } else {
-                    ps2.setInt(4, Integer.parseInt(campos[3]));
-                }
-                ps2.executeUpdate();
-            }
-
-            if (tabla.equals("Employees")) {
-                insertarSQL = "INSERT INTO Employees VALUES (?,?,?,?,?,?,?,?,?,?,?)";
-                PreparedStatement ps2 = connDestino.getConn().prepareStatement(insertarSQL);
-                ps2.setInt(1, Integer.parseInt(campos[0]));
-                if (campos[1].equals("0")) {
-                    ps2.setNull(2, java.sql.Types.NULL);
-                } else {
-                    ps2.setString(2, campos[1]);
-                }
-                if (campos[2].equals("0")) {
-                    ps2.setNull(3, java.sql.Types.NULL);
-                } else {
-                    ps2.setString(3, campos[2]);
-                }
-                if (campos[3].equals("0")) {
-                    ps2.setNull(4, java.sql.Types.NULL);
-                } else {
-                    ps2.setString(4, campos[3]);
-                }
-                if (campos[4].equals("0")) {
-                    ps2.setNull(5, java.sql.Types.NULL);
-                } else {
-                    ps2.setString(5, campos[4]);
-                }
-                if (campos[5].equals("0")) {
-                    ps2.setNull(6, java.sql.Types.NULL);
-                } else {
-                    ps2.setDate(6, Date.valueOf(campos[5]));
-                }
-                if (campos[6].equals("0")) {
-                    ps2.setNull(7, java.sql.Types.NULL);
-                } else {
-                    ps2.setString(7, campos[6]);
-                }
-                if (campos[7].equals("0")) {
-                    ps2.setNull(8, java.sql.Types.NULL);
-                } else {
-                    ps2.setDouble(8, Double.parseDouble(campos[7]));
-                }
-                if (campos[8].equals("0")) {
-                    ps2.setNull(9, java.sql.Types.NULL);
-                } else {
-                    ps2.setDouble(9, Double.parseDouble(campos[8]));
-                }
-                if (campos[9].equals("0")) {
-                    ps2.setNull(10, java.sql.Types.NULL);
-                } else {
-                    ps2.setInt(10, Integer.parseInt(campos[9]));
-                }
-                if (campos[10].equals("0")) {
-                    ps2.setNull(11, java.sql.Types.NULL);
-                } else {
-                    ps2.setInt(11, Integer.parseInt(campos[10]));
-                }
-                System.out.println(ps2.getMetaData());
-                ps2.executeUpdate();
-            }
-
-            if (tabla.equals("Job_History")) {
-                insertarSQL = "INSERT INTO Job_History VALUES (?,?,?,?,?)";
-                PreparedStatement ps2 = connDestino.getConn().prepareStatement(insertarSQL);
-                ps2.setInt(1, Integer.parseInt(campos[0]));
-                ps2.setDate(2, Date.valueOf(campos[1]));
-                if (campos[2].equals("0")) {
-                    ps2.setNull(3, java.sql.Types.NULL);
-                } else {
-                    ps2.setDate(3, Date.valueOf(campos[2]));
-                }
-                if (campos[3].equals("0")) {
-                    ps2.setNull(4, java.sql.Types.NULL);
-                } else {
-                    ps2.setString(4, campos[3]);
-                }
-                if (campos[4].equals("0")) {
-                    ps2.setNull(5, java.sql.Types.NULL);
-                } else {
-                    ps2.setInt(5, Integer.parseInt(campos[4]));
-                }
-                ps2.executeUpdate();
-            }
-
-            if (tabla.equals("Jobs")) {
-                insertarSQL = "INSERT INTO Jobs VALUES (?,?,?,?)";
-                PreparedStatement ps2 = connDestino.getConn().prepareStatement(insertarSQL);
-                ps2.setString(1, campos[0]);
-                if (campos[1].equals("0")) {
-                    ps2.setNull(2, java.sql.Types.NULL);
-                } else {
-                    ps2.setString(2, campos[1]);
-                }
-                if (campos[2].equals("0")) {
-                    ps2.setNull(3, java.sql.Types.NULL);
-                } else {
-                    ps2.setInt(3, Integer.parseInt(campos[2]));
-                }
-                if (campos[3].equals("0")) {
-                    ps2.setNull(4, java.sql.Types.NULL);
-                } else {
-                    ps2.setInt(4, Integer.parseInt(campos[3]));
-                }
-                ps2.executeUpdate();
-            }
-
-            if (tabla.equals("Locations")) {
-                insertarSQL = "INSERT INTO Jobs VALUES (?,?,?,?,?,?)";
-                PreparedStatement ps2 = connDestino.getConn().prepareStatement(insertarSQL);
-                ps2.setInt(1, Integer.parseInt(campos[0]));
-                for (int i = 1; i < campos.length; i++) {
-                    if (campos[i].equals("0")) {
-                        ps2.setNull(i + 1, java.sql.Types.NULL);
+                if (tabla.equals("Countries")) {
+                    insertarSQL = "INSERT INTO Countries VALUES (?,?,?)";
+                    PreparedStatement ps2 = connDestino.getConn().prepareStatement(insertarSQL);
+                    ps2.setString(1, campos[0]);
+                    if (campos[1].equals("0")) {
+                        ps2.setNull(2, java.sql.Types.NULL);
                     } else {
-                        ps2.setString(i + 1, campos[i]);
+                        ps2.setString(2, campos[1]);
                     }
+                    if (campos[2].equals("0")) {
+                        ps2.setNull(3, java.sql.Types.NULL);
+                    }
+                    ps2.executeUpdate();
                 }
-                ps2.executeUpdate();
-            }
 
-            if (tabla.equals("Regions")) {
-                insertarSQL = "INSERT INTO Regions VALUES (?,?)";
-                PreparedStatement ps2 = connDestino.getConn().prepareStatement(insertarSQL);
-                ps2.setInt(1, Integer.parseInt(campos[0]));
-                if (campos[1].equals("0")) {
-                    ps2.setNull(2, java.sql.Types.NULL);
-                } else {
-                    ps2.setString(2, campos[1]);
+                if (tabla.equals("Departments")) {
+                    insertarSQL = "INSERT INTO Departments VALUES (?,?,?,?)";
+                    PreparedStatement ps2 = connDestino.getConn().prepareStatement(insertarSQL);
+                    ps2.setInt(1, Integer.parseInt(campos[0]));
+                    if (campos[1].equals("0")) {
+                        ps2.setNull(2, java.sql.Types.NULL);
+                    } else {
+                        ps2.setString(2, campos[1]);
+                    }
+                    if (campos[2].equals("0")) {
+                        ps2.setNull(3, java.sql.Types.NULL);
+                    } else {
+                        ps2.setInt(3, Integer.parseInt(campos[2]));
+                    }
+                    if (campos[3].equals("0")) {
+                        ps2.setNull(4, java.sql.Types.NULL);
+                    } else {
+                        ps2.setInt(4, Integer.parseInt(campos[3]));
+                    }
+                    ps2.executeUpdate();
                 }
-                ps2.executeUpdate();
-            }
-            
-            PreparedStatement ps = null;
-            String actuaBitacora = "UPDATE bitacora "
-                    + "SET replicado = ? "
-                    + "WHERE \"idOperacion\" = ?";
-            ps = connOrigen.getConn().prepareStatement(actuaBitacora);
-            ps.setBoolean(1, true);
-            ps.setInt(2, Integer.parseInt(row[2]));
-            System.out.println(ps.executeUpdate());
-            
-            connDestino.desconexion();
-            System.out.println(Arrays.toString(row));
 
+                if (tabla.equals("Employees")) {
+                    insertarSQL = "INSERT INTO Employees "
+                            + "VALUES (?,?,?,?,?,?,?,?,?,?,?)";
+                    PreparedStatement ps2 = connDestino.getConn().prepareStatement(insertarSQL);
+                    ps2.setInt(1, Integer.parseInt(campos[0]));
+                    if (campos[1].equals("0")) {
+                        ps2.setNull(2, java.sql.Types.NULL);
+                    } else {
+                        ps2.setString(2, campos[1]);
+                    }
+                    if (campos[2].equals("0")) {
+                        ps2.setNull(3, java.sql.Types.NULL);
+                    } else {
+                        ps2.setString(3, campos[2]);
+                    }
+                    if (campos[3].equals("0")) {
+                        ps2.setNull(4, java.sql.Types.NULL);
+                    } else {
+                        ps2.setString(4, campos[3]);
+                    }
+                    if (campos[4].equals("0")) {
+                        ps2.setNull(5, java.sql.Types.NULL);
+                    } else {
+                        ps2.setString(5, campos[4]);
+                    }
+                    if (campos[5].equals("0")) {
+                        ps2.setNull(6, java.sql.Types.NULL);
+                    } else {
+                        ps2.setDate(6, Date.valueOf(campos[5]));
+                    }
+                    if (campos[6].equals("0")) {
+                        ps2.setNull(7, java.sql.Types.NULL);
+                    } else {
+                        ps2.setString(7, campos[6]);
+                    }
+                    if (campos[7].equals("0")) {
+                        ps2.setNull(8, java.sql.Types.NULL);
+                    } else {
+                        ps2.setDouble(8, Double.parseDouble(campos[7]));
+                    }
+                    if (campos[8].equals("0")) {
+                        ps2.setNull(9, java.sql.Types.NULL);
+                    } else {
+                        ps2.setDouble(9, Double.parseDouble(campos[8]));
+                    }
+                    if (campos[9].equals("0")) {
+                        ps2.setNull(10, java.sql.Types.NULL);
+                    } else {
+                        ps2.setInt(10, Integer.parseInt(campos[9]));
+                    }
+                    if (campos[10].equals("0")) {
+                        ps2.setNull(11, java.sql.Types.NULL);
+                    } else {
+                        ps2.setInt(11, Integer.parseInt(campos[10]));
+                    }
+                    ps2.executeUpdate();
+                }
+
+                if (tabla.equals("Job_History")) {
+                    insertarSQL = "INSERT INTO Job_History VALUES (?,?,?,?,?)";
+                    PreparedStatement ps2 = connDestino.getConn().prepareStatement(insertarSQL);
+                    ps2.setInt(1, Integer.parseInt(campos[0]));
+                    ps2.setDate(2, Date.valueOf(campos[1]));
+                    if (campos[2].equals("0")) {
+                        ps2.setNull(3, java.sql.Types.NULL);
+                    } else {
+                        ps2.setDate(3, Date.valueOf(campos[2]));
+                    }
+                    if (campos[3].equals("0")) {
+                        ps2.setNull(4, java.sql.Types.NULL);
+                    } else {
+                        ps2.setString(4, campos[3]);
+                    }
+                    if (campos[4].equals("0")) {
+                        ps2.setNull(5, java.sql.Types.NULL);
+                    } else {
+                        ps2.setInt(5, Integer.parseInt(campos[4]));
+                    }
+                    ps2.executeUpdate();
+                }
+
+                if (tabla.equals("Jobs")) {
+                    insertarSQL = "INSERT INTO Jobs VALUES (?,?,?,?)";
+                    PreparedStatement ps2 = connDestino.getConn().prepareStatement(insertarSQL);
+                    ps2.setString(1, campos[0]);
+                    if (campos[1].equals("0")) {
+                        ps2.setNull(2, java.sql.Types.NULL);
+                    } else {
+                        ps2.setString(2, campos[1]);
+                    }
+                    if (campos[2].equals("0")) {
+                        ps2.setNull(3, java.sql.Types.NULL);
+                    } else {
+                        ps2.setInt(3, Integer.parseInt(campos[2]));
+                    }
+                    if (campos[3].equals("0")) {
+                        ps2.setNull(4, java.sql.Types.NULL);
+                    } else {
+                        ps2.setInt(4, Integer.parseInt(campos[3]));
+                    }
+                    ps2.executeUpdate();
+                }
+
+                if (tabla.equals("Locations")) {
+                    insertarSQL = "INSERT INTO Jobs VALUES (?,?,?,?,?,?)";
+                    PreparedStatement ps2 = connDestino.getConn().prepareStatement(insertarSQL);
+                    ps2.setInt(1, Integer.parseInt(campos[0]));
+                    for (int j = 1; j < campos.length; j++) {
+                        if (campos[j].equals("0")) {
+                            ps2.setNull(j + 1, java.sql.Types.NULL);
+                        } else {
+                            ps2.setString(j + 1, campos[j]);
+                        }
+                    }
+                    ps2.executeUpdate();
+                }
+
+                if (tabla.equals("Regions")) {
+                    insertarSQL = "INSERT INTO Regions VALUES (?,?)";
+                    PreparedStatement ps2 = connDestino.getConn().prepareStatement(insertarSQL);
+                    ps2.setInt(1, Integer.parseInt(campos[0]));
+                    if (campos[1].equals("0")) {
+                        ps2.setNull(2, java.sql.Types.NULL);
+                    } else {
+                        ps2.setString(2, campos[1]);
+                    }
+                    ps2.executeUpdate();
+                }
+
+                PreparedStatement ps = null;
+                String actuaBitacora = "UPDATE bitacora "
+                        + "SET replicado = ? "
+                        + "WHERE \"idOperacion\" = ?";
+                ps = connOrigen.getConn().prepareStatement(actuaBitacora);
+                ps.setBoolean(1, true);
+                ps.setInt(2, Integer.parseInt(row[2]));
+                ps.executeUpdate();
+
+                System.out.println("listo");
+
+            }
         }
-
+        connDestino.desconexion();
         connOrigen.desconexion();
     }
 
