@@ -373,6 +373,8 @@ public class main extends javax.swing.JFrame {
                 String[] tablasAreplicar = new String[modelo.getSize()];
                 modelo.copyInto(tablasAreplicar);
                 insertar(tablasAreplicar);
+                modificar(tablasAreplicar);
+                eliminar(tablasAreplicar);
                 JOptionPane.showMessageDialog(this, "Se replicaron las tablas", "Succes", JOptionPane.INFORMATION_MESSAGE);
             } catch (SQLException ex) {
                 Logger.getLogger(main.class.getName()).log(Level.SEVERE, null, ex);
@@ -452,6 +454,8 @@ public class main extends javax.swing.JFrame {
                     }
                     if (campos[2].equals("0")) {
                         ps2.setNull(3, java.sql.Types.NULL);
+                    } else {
+                        ps2.setInt(3, Integer.parseInt(campos[2]));
                     }
                     ps2.executeUpdate();
                 }
@@ -616,6 +620,303 @@ public class main extends javax.swing.JFrame {
                 ps.setInt(2, Integer.parseInt(row[2]));
                 ps.executeUpdate();
 
+                System.out.println("listo");
+
+            }
+        }
+        connDestino.desconexion();
+        connOrigen.desconexion();
+    }
+
+    public void modificar(String[] tablasReplicar) throws SQLException {
+        connOrigen.getConnection();
+        connDestino.getConnection();
+        for (int i = 0; i < tablasReplicar.length; i++) {
+            String row[] = new String[3];
+            String sql = "SELECT tablaReferencia, datos, \"idOperacion\" FROM bitacora WHERE replicado = false AND operacion = 'Update' AND tablaReferencia = ?";
+            PreparedStatement ps3 = connOrigen.getConn().prepareStatement(sql);
+            ps3.setString(1, tablasReplicar[i]);
+            ResultSet rs = ps3.executeQuery();
+
+            while (rs.next()) {
+                for (int j = 0; j < row.length; j++) {
+                    row[j] = rs.getString(j + 1);
+                }
+
+                String tabla = row[0];
+                String UpdateSQL = "";
+                String campos[] = row[1].split("[|]");
+
+                if (tabla.equals("Countries")) {
+                    UpdateSQL = "UPDATE Countries SET \"COUNTRY_NAME\" = ?,\"REGION_ID\" = ? WHERE \"COUNTRY_ID\" = ?";
+                    PreparedStatement ps2 = connDestino.getConn().prepareStatement(UpdateSQL);
+
+                    if (campos[1].equals("0")) {
+                        ps2.setNull(1, java.sql.Types.NULL);
+                    } else {
+                        ps2.setString(1, campos[1]);
+                    }
+                    if (campos[2].equals("0")) {
+                        ps2.setNull(2, java.sql.Types.NULL);
+                    } else {
+                        ps2.setString(2, campos[2]);
+                    }
+                    ps2.setString(3, campos[0]);
+
+                    ps2.executeUpdate();
+
+                } else if (tabla.equals("Departments")) {
+                    UpdateSQL = "UPDATE Departments SET (\"DEPARTMENT_NAME\" = ?,\"MANAGER_ID\" = ?,\"LOCATION_ID\" = ?) WHERE \"DEPARTMENT_ID\" = ?";
+                    PreparedStatement ps2 = connDestino.getConn().prepareStatement(UpdateSQL);
+
+                    if (campos[1].equals("0")) {
+                        ps2.setNull(1, java.sql.Types.NULL);
+                    } else {
+                        ps2.setString(1, campos[1]);
+                    }
+                    if (campos[2].equals("0")) {
+                        ps2.setNull(2, java.sql.Types.NULL);
+                    } else {
+                        ps2.setInt(2, Integer.parseInt(campos[2]));
+                    }
+                    if (campos[3].equals("0")) {
+                        ps2.setNull(3, java.sql.Types.NULL);
+                    } else {
+                        ps2.setInt(3, Integer.parseInt(campos[3]));
+                    }
+                    ps2.setInt(4, Integer.parseInt(campos[0]));
+
+                    ps2.executeUpdate();
+
+                } else if (tabla.equals("Employees")) {
+                    UpdateSQL = "UPDATE Employees "
+                            + "SET (\"FIRST_NAME\" = ?,\"LAST_NAME\" = ?,\"EMAIL\" = ?,\"PHONE_NUMBER\" = ?,\"HIRE_DATE\" = ?,"
+                            + "\"JOB_ID\" = ?,\"SALARY\" = ?,\"COMMISSION_PCT\" = ?,\"MANAGER_ID\" = ?,\"DEPARTMENT_ID\" = ?) "
+                            + "WHERE \"EMPLOYEE_ID\" = ?";
+                    PreparedStatement ps2 = connDestino.getConn().prepareStatement(UpdateSQL);
+
+                    if (campos[1].equals("0")) {
+                        ps2.setNull(1, java.sql.Types.NULL);
+                    } else {
+                        ps2.setString(1, campos[1]);
+                    }
+                    if (campos[2].equals("0")) {
+                        ps2.setNull(2, java.sql.Types.NULL);
+                    } else {
+                        ps2.setString(2, campos[2]);
+                    }
+                    if (campos[3].equals("0")) {
+                        ps2.setNull(3, java.sql.Types.NULL);
+                    } else {
+                        ps2.setString(3, campos[3]);
+                    }
+                    if (campos[4].equals("0")) {
+                        ps2.setNull(4, java.sql.Types.NULL);
+                    } else {
+                        ps2.setString(4, campos[4]);
+                    }
+                    if (campos[5].equals("0")) {
+                        ps2.setNull(5, java.sql.Types.NULL);
+                    } else {
+                        ps2.setDate(5, Date.valueOf(campos[5]));
+                    }
+                    if (campos[6].equals("0")) {
+                        ps2.setNull(6, java.sql.Types.NULL);
+                    } else {
+                        ps2.setString(6, campos[6]);
+                    }
+                    if (campos[7].equals("0")) {
+                        ps2.setNull(7, java.sql.Types.NULL);
+                    } else {
+                        ps2.setDouble(7, Double.parseDouble(campos[7]));
+                    }
+                    if (campos[8].equals("0")) {
+                        ps2.setNull(8, java.sql.Types.NULL);
+                    } else {
+                        ps2.setDouble(8, Double.parseDouble(campos[8]));
+                    }
+                    if (campos[9].equals("0")) {
+                        ps2.setNull(9, java.sql.Types.NULL);
+                    } else {
+                        ps2.setInt(9, Integer.parseInt(campos[9]));
+                    }
+                    if (campos[10].equals("0")) {
+                        ps2.setNull(10, java.sql.Types.NULL);
+                    } else {
+                        ps2.setInt(10, Integer.parseInt(campos[10]));
+                    }
+                    ps2.setInt(11, Integer.parseInt(campos[0]));
+
+                    ps2.executeUpdate();
+
+                } else if (tabla.equals("Job_History")) {
+                    UpdateSQL = "UPDATE Job_History "
+                            + "SET (\"START_DATE\" = ?,\"END_DATE\" = ?,\"JOB_ID\" = ?,\"DEPARTMENT_ID\" = ?) WHERE \"EMPLOYEE_ID\" = ?";
+                    PreparedStatement ps2 = connDestino.getConn().prepareStatement(UpdateSQL);
+
+                    if (campos[1].equals("0")) {
+                        ps2.setNull(1, java.sql.Types.NULL);
+                    } else {
+                        ps2.setDate(1, Date.valueOf(campos[1]));
+                    }
+                    if (campos[2].equals("0")) {
+                        ps2.setNull(2, java.sql.Types.NULL);
+                    } else {
+                        ps2.setDate(2, Date.valueOf(campos[2]));
+                    }
+                    if (campos[3].equals("0")) {
+                        ps2.setNull(3, java.sql.Types.NULL);
+                    } else {
+                        ps2.setString(3, campos[3]);
+                    }
+                    if (campos[4].equals("0")) {
+                        ps2.setNull(4, java.sql.Types.NULL);
+                    } else {
+                        ps2.setInt(4, Integer.parseInt(campos[4]));
+                    }
+                    ps2.setInt(5, Integer.parseInt(campos[0]));
+
+                    ps2.executeUpdate();
+                } else if (tabla.equals("Jobs")) {
+                    UpdateSQL = "UPDATE Jobs "
+                            + "SET (\"JOB_TITLE\" = ?,\"MIN_SALARY\" = ?,\"MAX_SALARY\" = ?) WHERE \"JOB_ID\" = ?";
+                    PreparedStatement ps2 = connDestino.getConn().prepareStatement(UpdateSQL);
+
+                    if (campos[1].equals("0")) {
+                        ps2.setNull(1, java.sql.Types.NULL);
+                    } else {
+                        ps2.setString(1, campos[1]);
+                    }
+                    if (campos[2].equals("0")) {
+                        ps2.setNull(2, java.sql.Types.NULL);
+                    } else {
+                        ps2.setInt(2, Integer.parseInt(campos[2]));
+                    }
+                    if (campos[3].equals("0")) {
+                        ps2.setNull(3, java.sql.Types.NULL);
+                    } else {
+                        ps2.setInt(3, Integer.parseInt(campos[3]));
+                    }
+                    ps2.setString(4, campos[0]);
+
+                    ps2.executeUpdate();
+                } else if (tabla.equals("Locations")) {
+                    UpdateSQL = "UPDATE Locations "
+                            + "SET (\"STREET_ADDRESS\" = ?,\"POSTAL_CODE\" = ?,\"CITY\" = ?,\"STATE_PROVINCE\" = ?,\"COUNTRY_ID\" = ?) WHERE \"LOCATION_ID\" = ?";
+                    PreparedStatement ps2 = connDestino.getConn().prepareStatement(UpdateSQL);
+
+                    for (int j = 1; j < campos.length; j++) {
+                        if (campos[j].equals("0")) {
+                            ps2.setNull(j, java.sql.Types.NULL);
+                        } else {
+                            ps2.setString(j, campos[j]);
+                        }
+                    }
+                    ps2.setInt(6, Integer.parseInt(campos[0]));
+
+                    ps2.executeUpdate();
+                } else if (tabla.equals("Regions")) {
+                    UpdateSQL = "UPDATE Regions SET (\"REGION_NAME\" = ?) WHERE \"REGION_ID\" = ?";
+                    PreparedStatement ps2 = connDestino.getConn().prepareStatement(UpdateSQL);
+
+                    if (campos[1].equals("0")) {
+                        ps2.setNull(1, java.sql.Types.NULL);
+                    } else {
+                        ps2.setString(1, campos[1]);
+                    }
+                    ps2.setInt(2, Integer.parseInt(campos[0]));
+
+                    ps2.executeUpdate();
+                }
+                PreparedStatement ps = null;
+                String actuaBitacora = "UPDATE bitacora " + "SET replicado = ? " + "WHERE \"idOperacion\" = ?";
+                ps = connOrigen.getConn().prepareStatement(actuaBitacora);
+                ps.setBoolean(1, true);
+                ps.setInt(2, Integer.parseInt(row[2]));
+                ps.executeUpdate();
+                System.out.println("listo");
+
+            }
+        }
+        connDestino.desconexion();
+        connOrigen.desconexion();
+    }
+
+    public void eliminar(String[] tablasReplicar) throws SQLException {
+        connOrigen.getConnection();
+        connDestino.getConnection();
+        for (int i = 0; i < tablasReplicar.length; i++) {
+            String row[] = new String[3];
+            String sql = "SELECT tablaReferencia, datos, \"idOperacion\" FROM bitacora WHERE replicado = false AND operacion = 'Delete' AND tablaReferencia = ?";
+            PreparedStatement ps3 = connOrigen.getConn().prepareStatement(sql);
+            ps3.setString(1, tablasReplicar[i]);
+            ResultSet rs = ps3.executeQuery();
+
+            while (rs.next()) {
+                for (int j = 0; j < row.length; j++) {
+                    row[j] = rs.getString(j + 1);
+                }
+
+                String tabla = row[0];
+                String DeleteSQL = "";
+
+                if (tabla.equals("Countries")) {
+                    DeleteSQL = "DELETE FROM Countries WHERE \"COUNTRY_ID\" = ?";
+                    PreparedStatement ps2 = connDestino.getConn().prepareStatement(DeleteSQL);
+
+                    ps2.setString(1, row[1]);
+
+                    ps2.executeUpdate();
+                } else if (tabla.equals("Departments")) {
+                    DeleteSQL = "DELETE FROM Departments WHERE \"DEPARTMENT_ID\" = ?";
+                    PreparedStatement ps2 = connDestino.getConn().prepareStatement(DeleteSQL);
+
+                    ps2.setString(1, row[1]);
+
+                    ps2.executeUpdate();
+                } else if (tabla.equals("Employees")) {
+                    DeleteSQL = "DELETE FROM Employees WHERE \"EMPLOYEE_ID\" = ?";
+                    PreparedStatement ps2 = connDestino.getConn().prepareStatement(DeleteSQL);
+
+                    ps2.setString(1, row[1]);
+
+                    ps2.executeUpdate();
+                } else if (tabla.equals("Job_History")) {
+                    DeleteSQL = "DELETE FROM Job_History WHERE \"EMPLOYEE_ID\" = ?";
+                    PreparedStatement ps2 = connDestino.getConn().prepareStatement(DeleteSQL);
+
+                    ps2.setString(1, row[1]);
+
+                    ps2.executeUpdate();
+                } else if (tabla.equals("Jobs")) {
+                    DeleteSQL = "DELETE FROM Jobs WHERE \"JOB_ID\" = ?";
+                    PreparedStatement ps2 = connDestino.getConn().prepareStatement(DeleteSQL);
+
+                    ps2.setString(1, row[1]);
+
+                    ps2.executeUpdate();
+                } else if (tabla.equals("Locations")) {
+                    DeleteSQL = "DELETE FROM Locations WHERE \"LOCATION_ID\" = ?";
+                    PreparedStatement ps2 = connDestino.getConn().prepareStatement(DeleteSQL);
+
+                    ps2.setString(1, row[1]);
+
+                    ps2.executeUpdate();
+                } else if (tabla.equals("Regions")) {
+                    DeleteSQL = "DELETE FROM Regions WHERE \"REGION_ID\" = ?";
+                    PreparedStatement ps2 = connDestino.getConn().prepareStatement(DeleteSQL);
+
+                    ps2.setString(1, row[1]);
+
+                    ps2.executeUpdate();
+                }
+
+                PreparedStatement ps = null;
+                String actuaBitacora = "UPDATE bitacora " + "SET replicado = ? " + "WHERE \"idOperacion\" = ?";
+                ps = connOrigen.getConn().prepareStatement(actuaBitacora);
+                ps.setBoolean(1, true);
+                ps.setInt(2, Integer.parseInt(row[2]));
+                ps.executeUpdate();
                 System.out.println("listo");
 
             }
